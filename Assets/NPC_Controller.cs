@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class NPC_Controller : MonoBehaviour
 {
     public Animator anim;
@@ -17,9 +18,23 @@ public class NPC_Controller : MonoBehaviour
         set
         {
             _myCurrentAnim = value;
-            if (GetComponent<Animator>())
+            if (anim)
             {
-                GetComponent<Animator>().SetInteger("moveState", (int)_myCurrentAnim);
+                anim.SetInteger("moveState", (int)_myCurrentAnim);
+            }
+
+            if (value == 0)
+            {
+
+            }
+            else if ((int)value == 1)
+            {
+                transform.rotation = Quaternion.Euler(0, 180, 0);
+            }
+            else
+            {
+                transform.rotation = Quaternion.Euler(0, 0, 0);
+
             }
         }
     }
@@ -36,7 +51,6 @@ public class NPC_Controller : MonoBehaviour
     void NextAnimation()
     {
         myCurrentAnim = (animationOptions)(OverflowCheck((int)myCurrentAnim + 1));
-        print((int)myCurrentAnim);
     }
 
     int OverflowCheck(int numToCheck)
