@@ -61,6 +61,8 @@ public class PlayerController : MonoBehaviour
             }
         }
         //move group
+        selectedGroup.transform.Translate(inputDirection * Time.deltaTime, Space.World);
+
     }
 
     void JoystickTest()
