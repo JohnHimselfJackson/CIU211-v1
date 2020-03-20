@@ -110,13 +110,9 @@ public class PlayerController : MonoBehaviour
             RaycastHit hitData; 
             if(Physics.Raycast(ray, out hitData))
             {
-                print(hitData.collider.gameObject.name);
-                print(hitData.point);
-                print(playerCamera.ScreenToWorldPoint(Input.mousePosition));
-
                 if (hitData.collider.gameObject.CompareTag("Group"))
                 {
-                    hitData.collider.gameObject.GetComponent<GenericGroup>().selected = false;
+                    selectedGroup.GetComponent<GenericGroup>().selected = false;
                     selectedGroup = hitData.collider.gameObject;
                     hitData.collider.gameObject.GetComponent<GenericGroup>().selected = true;
                 }
