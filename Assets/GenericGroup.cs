@@ -5,10 +5,32 @@ using UnityEngine;
 public class GenericGroup : MonoBehaviour
 {
     public GameObject[] npcs;
+    public GameObject selectionCircle;
+    private bool _selected;
+    public bool selected
+    {
+        get
+        {
+            return _selected;
+        }
+
+        set
+        {
+            _selected = value;
+            if(value == true)
+            {
+                selectionCircle.SetActive(true);
+            }
+            else
+            {
+                selectionCircle.SetActive(false);
+            }
+        }
+    }
 
     public enum Subculture { populars, academics, loners, nerds, normies}
     public Subculture mySubculture = Subculture.normies;
-
+    public List<string> subcultures;
 
     /*
         three types of interactions
@@ -17,14 +39,20 @@ public class GenericGroup : MonoBehaviour
             - attract
     */
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    void Start()
+    {
+        selected = false;
+        subcultures.Add(nameof(mySubculture));
+    }
+
+    private void OnTriggerEnter(Collider collision)
     {
         GameObject go = collision.gameObject;
         #region populars reactions
         if(mySubculture == Subculture.populars 
            && (go.GetComponent<GenericGroup>().mySubculture == Subculture.academics || go.GetComponent<GenericGroup>().mySubculture == Subculture.normies))
         {
-            //positive reaction
+            print("positive Reaction");
         }
         if (mySubculture == Subculture.populars
            && (false))
@@ -34,14 +62,14 @@ public class GenericGroup : MonoBehaviour
         if (mySubculture == Subculture.populars
            && (go.GetComponent<GenericGroup>().mySubculture == Subculture.nerds || go.GetComponent<GenericGroup>().mySubculture == Subculture.loners))
         {
-            //negative reaction
+            print("Negative Reaction");
         }
         #endregion
         #region academics reactions
         if (mySubculture == Subculture.academics
            && (go.GetComponent<GenericGroup>().mySubculture == Subculture.nerds))
         {
-            //positive reaction
+            print("positive Reaction");
         }
         if (mySubculture == Subculture.academics
            && (go.GetComponent<GenericGroup>().mySubculture == Subculture.populars || go.GetComponent<GenericGroup>().mySubculture == Subculture.normies))
@@ -51,14 +79,14 @@ public class GenericGroup : MonoBehaviour
         if (mySubculture == Subculture.academics
            && (go.GetComponent<GenericGroup>().mySubculture == Subculture.loners))
         {
-            //negative reaction
+            print("Negative Reaction");
         }
         #endregion
         #region loners reactions
         if (mySubculture == Subculture.loners
            && (go.GetComponent<GenericGroup>().mySubculture == Subculture.nerds))
         {
-            //positive reaction
+            print("positive Reaction");
         }
         if (mySubculture == Subculture.loners
            && (go.GetComponent<GenericGroup>().mySubculture == Subculture.academics || go.GetComponent<GenericGroup>().mySubculture == Subculture.normies))
@@ -68,14 +96,14 @@ public class GenericGroup : MonoBehaviour
         if (mySubculture == Subculture.loners
            && (go.GetComponent<GenericGroup>().mySubculture == Subculture.populars))
         {
-            //negative reaction
+            print("Negative Reaction");
         }
         #endregion
         #region nerds reactions
         if (mySubculture == Subculture.nerds
            && (go.GetComponent<GenericGroup>().mySubculture == Subculture.loners || go.GetComponent<GenericGroup>().mySubculture == Subculture.normies))
         {
-            //positive reaction
+            print("positive Reaction");
         }
         if (mySubculture == Subculture.nerds
            && (go.GetComponent<GenericGroup>().mySubculture == Subculture.academics))
@@ -85,14 +113,14 @@ public class GenericGroup : MonoBehaviour
         if (mySubculture == Subculture.nerds
            && (go.GetComponent<GenericGroup>().mySubculture == Subculture.populars))
         {
-            //negative reaction
+            print("Negative Reaction");
         }
         #endregion
         #region normies reactions
         if (mySubculture == Subculture.nerds
            && (go.GetComponent<GenericGroup>().mySubculture == Subculture.populars || go.GetComponent<GenericGroup>().mySubculture == Subculture.academics || go.GetComponent<GenericGroup>().mySubculture == Subculture.nerds))
         {
-            //positive reaction
+            print("positive Reaction");
         }
         if (mySubculture == Subculture.nerds
            && (go.GetComponent<GenericGroup>().mySubculture == Subculture.loners))
@@ -102,10 +130,17 @@ public class GenericGroup : MonoBehaviour
         if (mySubculture == Subculture.nerds
            && (false))
         {
-            //negative reaction
+            print("Negative Reaction");
         }
         #endregion
+        for (int ss = 0; ss < subcultures.Count; ss++)
+        {
+            
+        }
     }
+
+
+
 
 
 

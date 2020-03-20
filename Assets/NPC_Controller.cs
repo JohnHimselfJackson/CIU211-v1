@@ -6,6 +6,7 @@ using UnityEngine;
 public class NPC_Controller : MonoBehaviour
 {
     public Animator anim;
+    public GameObject selectionCircle;
 
     public enum animationOptions {idle, movingLeft, movingRight, movingDown, movingUp, conversing }; // idle = 0, moveLeft = 1, moveRight = 2, movingDown = 3, movingUp = 4, conversing = 5;
     private animationOptions _myCurrentAnim;

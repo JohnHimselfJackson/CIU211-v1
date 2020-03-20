@@ -11,14 +11,18 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        playerCamera = GetComponent<Camera>();
     }
 
     // Update is called once per frame
     void Update()
     {
         JoystickTest();
-        MoveSelectedGroup();
+        if (selectedGroup != null)
+        {
+            MoveSelectedGroup();
+        }
+        GroupSelection();
     }
 
 
@@ -93,16 +97,28 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Escape))
         {
+            if (selectedGroup != null)
+            {
+                selectedGroup.GetComponent<GenericGroup>().selected = false;
+            }
             selectedGroup = null;
         }
         if (Input.GetMouseButtonUp(0))
         {
-            RaycastHit2D hitData = Physics2D.Raycast(playerCamera.ScreenToWorldPoint(Input.mousePosition), Vector3.forward, 100);
-            if(hitData == true)
+            print("test");
+            Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hitData; 
+            if(Physics.Raycast(ray, out hitData))
             {
+                print(hitData.collider.gameObject.name);
+                print(hitData.point);
+                print(playerCamera.ScreenToWorldPoint(Input.mousePosition));
+
                 if (hitData.collider.gameObject.CompareTag("Group"))
                 {
+                    hitData.collider.gameObject.GetComponent<GenericGroup>().selected = false;
                     selectedGroup = hitData.collider.gameObject;
+                    hitData.collider.gameObject.GetComponent<GenericGroup>().selected = true;
                 }
             }
         }
