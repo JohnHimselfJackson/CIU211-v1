@@ -19,23 +19,26 @@ public class NPC_Controller : MonoBehaviour
         set
         {
             _myCurrentAnim = value;
-            if (anim)
+            if(gameObject.activeInHierarchy == true)
             {
-                anim.SetInteger("moveState", (int)_myCurrentAnim);
-            }
+                if (anim)
+                {
+                    anim.SetInteger("moveState", (int)_myCurrentAnim);
+                }
 
-            if (value == 0)
-            {
+                if (value == 0)
+                {
 
-            }
-            else if ((int)value == 1)
-            {
-                transform.rotation = Quaternion.Euler(0, 180, 0);
-            }
-            else
-            {
-                transform.rotation = Quaternion.Euler(0, 0, 0);
+                }
+                else if ((int)value == 1)
+                {
+                    transform.rotation = Quaternion.Euler(0, 180, 0);
+                }
+                else
+                {
+                    transform.rotation = Quaternion.Euler(0, 0, 0);
 
+                }
             }
         }
     }
