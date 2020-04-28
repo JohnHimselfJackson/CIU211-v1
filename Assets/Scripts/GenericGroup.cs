@@ -34,7 +34,8 @@ public class GenericGroup : MonoBehaviour
     public enum Subculture { populars, academics, loners, nerds, normies}
     public Subculture mySubculture = Subculture.normies;
     public List<string> subcultures;
-    private GameObject otherGroupWorkerAround;
+    public GameObject otherGroupWorkerAround;
+    public TweetManager tm;
     
     /*
         three types of interactions
@@ -42,6 +43,7 @@ public class GenericGroup : MonoBehaviour
             - Repel
             - attract
     */
+
     int reactionType; //0 = positive 1 = neutral 2 = negative
 
     void Start()
@@ -54,10 +56,11 @@ public class GenericGroup : MonoBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
+        GameObject colGo = collision.gameObject;
         SetConversing(true);
+        tm.newTweet = subcultures[0] + ": Hmmm, i wonder what the " + (string)colGo.GetComponent<GenericGroup>().subcultures[0] + " are like";
         if (pc.selectedGroup == gameObject)
         {
-            GameObject colGo = collision.gameObject;
             int reaction = 2;
             for (int ms = 0; ms < subcultures.Count; ms++)
             {
@@ -78,10 +81,18 @@ public class GenericGroup : MonoBehaviour
                     }
                 }
             }
+            print(reaction);
             if (reaction == 0)
             {
                 otherGroupWorkerAround = colGo;
                 Invoke("PositiveReaction", 3.5f);
+
+            }
+            if(reaction == 2)
+            {
+                otherGroupWorkerAround = colGo;
+                colGo.GetComponent<GenericGroup>().otherGroupWorkerAround = gameObject;
+                Invoke("NegativeReaction",2);
             }
             if (groupSize == 5)
             {
@@ -128,7 +139,27 @@ public class GenericGroup : MonoBehaviour
         {
             SetConversing(false);
             IncreaseGroupSize(otherGroupWorkerAround.GetComponent<GenericGroup>().mySubculture);
+            tm.newTweet = otherGroupWorkerAround.GetComponent<GenericGroup>().mySubculture.ToString() + ": huh, " + mySubculture.ToString() + " are actually pretty cool";
             Destroy(otherGroupWorkerAround);
+        }
+    }
+    void NegativeReaction()
+    {
+        if (pc.selectedGroup != gameObject)
+        {
+            SetConversing(false);
+            otherGroupWorkerAround.GetComponent<GenericGroup>().SetConversing(false);
+            tm.newTweet = otherGroupWorkerAround.GetComponent<GenericGroup>().mySubculture.ToString() + ": yeah nah mate, i dont like these " + mySubculture.ToString();
+            otherGroupWorkerAround.transform.position = new Vector3(UnityEngine.Random.Range(-13f, 13f), UnityEngine.Random.Range(-8f, 8f), otherGroupWorkerAround.transform.position.z);
+        }
+    }
+    void NeutralReaction()
+    {
+        if (pc.selectedGroup == gameObject)
+        {
+            SetConversing(false);
+            otherGroupWorkerAround.GetComponent<GenericGroup>().SetConversing(false);
+            tm.newTweet = otherGroupWorkerAround.GetComponent<GenericGroup>().mySubculture.ToString() + ": eh, these " + mySubculture.ToString() + "are a bit average";
         }
     }
 

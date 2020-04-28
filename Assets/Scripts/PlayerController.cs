@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    { 
+    {
         if (playingGame)
         {
             JoystickTest();
@@ -40,23 +40,24 @@ public class PlayerController : MonoBehaviour
             Movement();
             CameraDrag();
         }
-        
+
     }
 
     void MoveSelectedGroup()
     {
         //get angle
         Vector2 inputDirection = new Vector2(playerJoystick.Horizontal, playerJoystick.Vertical);
+        inputDirection = CheckMoveBoundaries(inputDirection);
         //set move angle
-        if(inputDirection.x == 0 && inputDirection.y == 0)
+        if (inputDirection.x == 0 && inputDirection.y == 0)
         {
             //return to idle
             SetDirection(0);
         }
-        else if(Mathf.Abs(inputDirection.x) > Mathf.Abs(inputDirection.y))
+        else if (Mathf.Abs(inputDirection.x) > Mathf.Abs(inputDirection.y))
         {
             //moving laterally
-            if(inputDirection.x > 0)
+            if (inputDirection.x > 0)
             {
                 //moving right
                 SetDirection(2);
@@ -81,13 +82,14 @@ public class PlayerController : MonoBehaviour
                 SetDirection(3);
             }
         }
+
         //move group
         selectedGroup.transform.Translate(inputDirection * Time.deltaTime, Space.World);
     }
 
     void JoystickTest()
     {
-        if(selectedGroup == null)
+        if (selectedGroup == null)
         {
             playerJoystick.gameObject.SetActive(false);
         }
@@ -103,7 +105,7 @@ public class PlayerController : MonoBehaviour
     void SetDirection(int moveDirection)
     {
         //print(moveDirection);
-        for(int nn = 0; nn < selectedGroup.GetComponent<GenericGroup>().npcs.Length; nn++)
+        for (int nn = 0; nn < selectedGroup.GetComponent<GenericGroup>().npcs.Length; nn++)
         {
             selectedGroup.GetComponent<GenericGroup>().npcs[nn].GetComponent<NPC_Controller>().myCurrentAnim = (NPC_Controller.animationOptions)moveDirection;
         }
@@ -119,15 +121,16 @@ public class PlayerController : MonoBehaviour
         //    }
         //    selectedGroup = null;
         //}
+
         if (Input.GetMouseButtonUp(0))
         {
             Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hitData; 
-            if(Physics.Raycast(ray, out hitData))
+            RaycastHit hitData;
+            if (Physics.Raycast(ray, out hitData))
             {
                 if (hitData.collider.gameObject.CompareTag("Group"))
                 {
-                    if(selectedGroup != null)
+                    if (selectedGroup != null)
                     {
                         selectedGroup.GetComponent<GenericGroup>().selected = false;
                     }
@@ -135,8 +138,9 @@ public class PlayerController : MonoBehaviour
                     hitData.collider.gameObject.GetComponent<GenericGroup>().selected = true;
                 }
             }
-            else if(Input.mousePosition.x >645 && Input.mousePosition.y > 960)
+            else if (Input.mousePosition.x > 645 || Input.mousePosition.y > 645)
             {
+                print("test mouse");
                 if (selectedGroup != null)
                 {
                     selectedGroup.GetComponent<GenericGroup>().selected = false;
@@ -228,7 +232,7 @@ public class PlayerController : MonoBehaviour
 
     void CameraDrag()
     {
-        
+
         if (Input.GetMouseButtonDown(1))
         {
             draggingCamera = true;
@@ -250,6 +254,31 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    Vector2 CheckMoveBoundaries(Vector2 input)
+    {
+        if(selectedGroup.transform.position.x > 15 && input.x > 0)
+        {
+            print("case up");
+            input.x = 0;
+        }
+        if (selectedGroup.transform.position.x < -15 && input.x < 0)
+        {
+            print("case down");
+            input.x = 0;
+        }
 
+        if (selectedGroup.transform.position.y > 10 && input.y > 0)
+        {
+            print("case right");
+            input.y = 0;
+        }
+        if (selectedGroup.transform.position.y < -10 && input.y < 0)
+        {
+            print("case left");
+            input.y = 0;
+        }
+
+        return input;
+    }
 
 }
