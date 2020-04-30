@@ -36,6 +36,7 @@ public class GenericGroup : MonoBehaviour
     public List<string> subcultures;
     public GameObject otherGroupWorkerAround;
     public TweetManager tm;
+    public CanvasManagerScript cms;
     
     /*
         three types of interactions
@@ -64,8 +65,10 @@ public class GenericGroup : MonoBehaviour
             int reaction = 2;
             for (int ms = 0; ms < subcultures.Count; ms++)
             {
-                for (int ts = 0; ts < subcultures.Count; ts++)
+                print("my subculture loop");
+                for (int ts = 0; ts < colGo.GetComponent<GenericGroup>().subcultures.Count; ts++)
                 {
+                    print((Subculture)Enum.Parse(typeof(Subculture), subcultures[ms]) +" "+ (Subculture)Enum.Parse(typeof(Subculture), colGo.GetComponent<GenericGroup>().subcultures[ts]));
                     int newReaction = ReactionChecker((Subculture)Enum.Parse(typeof(Subculture), subcultures[ms]), (Subculture)Enum.Parse(typeof(Subculture), colGo.GetComponent<GenericGroup>().subcultures[ts]), colGo);
                     if (newReaction == 0)
                     {
@@ -84,19 +87,21 @@ public class GenericGroup : MonoBehaviour
             print(reaction);
             if (reaction == 0)
             {
+                print("pos happen");
                 otherGroupWorkerAround = colGo;
                 Invoke("PositiveReaction", 3.5f);
 
             }
             if(reaction == 2)
             {
+                print("neg happen");
                 otherGroupWorkerAround = colGo;
                 colGo.GetComponent<GenericGroup>().otherGroupWorkerAround = gameObject;
-                Invoke("NegativeReaction",2);
+                Invoke("NegativeReaction", 2);
             }
             if (groupSize == 5)
             {
-                //game won
+                cms.GameWon();
             }
         }
     }
@@ -104,14 +109,16 @@ public class GenericGroup : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collision)
     {
         SetConversing(false);
+        collision.GetComponent<GenericGroup>().SetConversing(false);
         CancelInvoke("PositiveReaction");
+        CancelInvoke("NegativeReaction");
         otherGroupWorkerAround = null;
     }
 
     void IncreaseGroupSize(Subculture newGroupType)
     {
         groupSize += 1;
-        subcultures.Add(nameof(newGroupType));
+        subcultures.Add(newGroupType.ToString());
         switch (groupSize)
         {
             case 2:
@@ -135,23 +142,19 @@ public class GenericGroup : MonoBehaviour
 
     void PositiveReaction()
     {
-        if(pc.selectedGroup == gameObject)
-        {
+        print("q1");
+            print("q2");
             SetConversing(false);
             IncreaseGroupSize(otherGroupWorkerAround.GetComponent<GenericGroup>().mySubculture);
             tm.newTweet = otherGroupWorkerAround.GetComponent<GenericGroup>().mySubculture.ToString() + ": huh, " + mySubculture.ToString() + " are actually pretty cool";
             Destroy(otherGroupWorkerAround);
-        }
     }
     void NegativeReaction()
     {
-        if (pc.selectedGroup != gameObject)
-        {
             SetConversing(false);
             otherGroupWorkerAround.GetComponent<GenericGroup>().SetConversing(false);
             tm.newTweet = otherGroupWorkerAround.GetComponent<GenericGroup>().mySubculture.ToString() + ": yeah nah mate, i dont like these " + mySubculture.ToString();
             otherGroupWorkerAround.transform.position = new Vector3(UnityEngine.Random.Range(-13f, 13f), UnityEngine.Random.Range(-8f, 8f), otherGroupWorkerAround.transform.position.z);
-        }
     }
     void NeutralReaction()
     {
@@ -165,101 +168,106 @@ public class GenericGroup : MonoBehaviour
 
     int ReactionChecker(Subculture mySc, Subculture theirSc, GameObject go)
     {
+        print(mySc.ToString() + " " + theirSc.ToString());
+        int returnthis = 0;
         #region populars reactions
         if (mySc == Subculture.populars
            && (theirSc == Subculture.academics || theirSc == Subculture.normies))
         {
-            return 0;
+            returnthis = 0;
         }
         if (mySubculture == Subculture.populars
            && (false))
         {
             //no reaction
-            return 1;
+            returnthis = 1;
         }
         if (mySubculture == Subculture.populars
            && (theirSc == Subculture.nerds || theirSc == Subculture.loners))
         {
             print("Negative Reaction");
-            return 2;
+            returnthis = 2;
         }
         #endregion
         #region academics reactions
         if (mySubculture == Subculture.academics
            && (theirSc == Subculture.nerds))
         {
-            return 0;
+            returnthis = 0;
         }
         if (mySubculture == Subculture.academics
            && (theirSc == Subculture.populars || theirSc == Subculture.normies))
         {
             //no reaction
-            return 1;
+            returnthis = 1;
         }
         if (mySubculture == Subculture.academics
            && (theirSc == Subculture.loners))
         {
             print("Negative Reaction");
-            return 2;
+            returnthis = 2;
         }
         #endregion
         #region loners reactions
         if (mySubculture == Subculture.loners
            && (theirSc == Subculture.nerds))
         {
-            return 0;
+            returnthis = 0;
         }
         if (mySubculture == Subculture.loners
            && (theirSc == Subculture.academics || theirSc == Subculture.normies))
         {
             //no reaction
-            return 1;
+            returnthis = 1;
         }
         if (mySubculture == Subculture.loners
            && (theirSc == Subculture.populars))
         {
             print("Negative Reaction");
-            return 2;
+            returnthis = 2;
         }
         #endregion
         #region nerds reactions
         if (mySubculture == Subculture.nerds
            && (theirSc == Subculture.loners || theirSc == Subculture.normies))
         {
-            return 0;
+            returnthis = 0;
         }
         if (mySubculture == Subculture.nerds
            && (theirSc == Subculture.academics))
         {
             //no reaction
-            return 1;
+            returnthis = 1;
         }
         if (mySubculture == Subculture.nerds
            && (theirSc == Subculture.populars))
         {
             print("Negative Reaction");
-            return 2;
+            returnthis = 2;
         }
         #endregion
         #region normies reactions
-        if (mySubculture == Subculture.nerds
+        if (mySubculture == Subculture.normies
            && (theirSc == Subculture.populars || theirSc == Subculture.academics || theirSc == Subculture.nerds))
         {
-            return 0;
+            print("suck");
+            returnthis = 0;
         }
-        if (mySubculture == Subculture.nerds
+        if (mySubculture == Subculture.normies
            && (theirSc == Subculture.loners))
         {
             //no reaction
-            return 1;
+            returnthis = 1;
         }
-        if (mySubculture == Subculture.nerds
+        if (mySubculture == Subculture.normies
            && (false))
         {
-            print("Negative Reaction");
-            return 2;
+            print("broken Reaction");
+            returnthis = 2;
         }
         #endregion
+        print("reaction found = " + returnthis);
+
         return 0;
     }
 
