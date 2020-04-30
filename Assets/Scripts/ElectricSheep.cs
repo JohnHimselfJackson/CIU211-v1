@@ -5,26 +5,39 @@ using UnityEngine.UI;
 
 public class ElectricSheep : MonoBehaviour
 {
-    bool deactivating = false;
-    // Update is called once per frame
-    void Update()
-    {
-        StateChecker();
-    }
-
-    void SetBubbleActive()
+    GenericGroup conversing;
+    int baa = 5;
+    private void Start()
     {
         gameObject.SetActive(false);
-        deactivating = false;
     }
 
-
-    void StateChecker()
+    public void StartBaa()
     {
-        if(gameObject.activeInHierarchy == true && !deactivating)
-        {
-            Invoke("SetBubbleActive", 0.5f);
-            deactivating = true;
-        }
+        StartCoroutine(BaaBaa());
     }
+
+    private void OnTriggerEnter(Collider collision)
+    {
+        StartCoroutine(Baa());
+    }
+
+    IEnumerator Baa()
+    {
+        gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(50);
+
+        gameObject.SetActive(false);
+    }
+
+    IEnumerator BaaBaa()
+    {
+        gameObject.SetActive(true);
+
+        yield return 20;
+
+        gameObject.SetActive(false);
+    }
+    
 }

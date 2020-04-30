@@ -37,6 +37,7 @@ public class GenericGroup : MonoBehaviour
     public GameObject otherGroupWorkerAround;
     public TweetManager tm;
     public CanvasManagerScript cms;
+    public ElectricSheep ba;
     
     /*
         three types of interactions
@@ -53,12 +54,16 @@ public class GenericGroup : MonoBehaviour
         selected = false;
         subcultures.Add(mySubculture.ToString());
         groupSize = 1;
+        ba = GetComponentInChildren<ElectricSheep>();
+        print(ba);
     }
 
+   
     private void OnTriggerEnter(Collider collision)
     {
         GameObject colGo = collision.gameObject;
         SetConversing(true);
+        ba.StartBaa();
         tm.newTweet = subcultures[0] + ": Hmmm, i wonder what the " + (string)colGo.GetComponent<GenericGroup>().subcultures[0] + " are like";
         if (pc.selectedGroup == gameObject)
         {
@@ -90,7 +95,6 @@ public class GenericGroup : MonoBehaviour
                 print("pos happen");
                 otherGroupWorkerAround = colGo;
                 Invoke("PositiveReaction", 3.5f);
-
             }
             if(reaction == 2)
             {
